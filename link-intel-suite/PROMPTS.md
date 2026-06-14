@@ -39,6 +39,8 @@ Format per entry:
 - **For:** Full schema compliance audit and baseline metrics recording before implementing new features.
 - **Revised?** No. Used to establish a verified baseline and document the initial state of the starter project before development began.
 
-4.
+4.- **Prompt:** "Write a quick Python script (run it inline, don't save) that validates report.json against report.schema.json by checking: (1) All required top-level keys exist (2) summary has all 8 required integer fields (3) link_graph has all required fields (4) anchor_text has all required fields (5) topical_clusters is a non-empty array where each item has key, size, pages, authority (6) entity_graph is an object (can be empty) (7) link_recommendations is an array where each item has source, target, suggested_anchor (8) run_meta has model_calls. Print PASS or FAIL with detailed validation results."
+- **For:** Automated schema validation and regression testing of report.json before making further changes.
+- **Revised?** Yes. Initially relied on manual inspection of report.json, then switched to an automated validation script to catch missing fields and type mismatches consistently.
 
 5.
