@@ -96,3 +96,11 @@ Format:
 - `[13:59]` Tested fragment removal, trailing-slash handling, root URLs, and query-string preservation -> confirms compliance with rulebook URL normalization requirements.
 
 - `[13:59]` Used expected-output assertions for URL normalization -> makes future regressions immediately visible when modifying helper functions.
+
+- `[14:09]` Audited GENERIC_ANCHORS against the published rulebook -> verified all mandatory anchor phrases were present before extending the set.
+
+- `[14:09]` Expanded generic-anchor coverage with additional non-descriptive phrases -> improves detection of weak internal anchor text without relying solely on the starter list.
+
+- `[14:09]` Excluded borderline descriptive anchors from the generic set -> avoided increasing false positives by classifying potentially meaningful anchors as generic.
+
+- `[14:09]` Compared generic-anchor counts before and after the update -> verified the impact of the expanded classification rules on real crawl data.

@@ -78,3 +78,8 @@ recommendations**. It serves a live dashboard at localhost:7700 and outputs
 - Every URL normalization change should be validated with explicit input/output test cases.
 - Query strings must be preserved while fragments are removed.
 - Helper functions that affect graph matching should have regression tests before modification.
+
+- Generic-anchor detection must include all mandatory rulebook phrases plus sensible non-descriptive extensions.
+- Prefer precision over aggressive expansion; avoid classifying potentially meaningful anchors as generic.
+- Validate classification changes by comparing generic-anchor counts before and after modifications.
+- Anchor classification rules should be tested against real crawl exports, not only static term lists.
