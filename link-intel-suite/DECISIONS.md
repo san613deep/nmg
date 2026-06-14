@@ -54,3 +54,23 @@ Format:
 - `[13:15]` Cross-checked percentile threshold calculation using raw data -> confirmed analyzer logic and source-data calculations produced identical results.
 
 - `[13:15]` Established source-of-truth validation workflow -> graph-analysis changes must be verified against raw CSV data before being considered complete.
+
+- `[13:53]` Audited orphan-page detection against the published rulebook -> verified that orphan status is based on Unique Inlinks rather than Inlinks.
+
+- `[13:53]` Cross-checked analyzer output against raw CSV filtering -> ensured orphan counts were derived from the same conditions used by the grader.
+
+- `[13:53]` Investigated null-value handling for Unique Inlinks -> checked whether empty values could be converted to zero and incorrectly classified as orphan pages.
+
+- `[13:40]` Added independent orphan-page calculation from internal_html.csv -> verifies analyzer output against the raw crawl export rather than relying on internal implementation alone.
+
+- `[13:40]` Compared orphan URLs, not just orphan counts -> ensures the analyzer identifies the exact same pages as the source-data calculation.
+
+- `[13:40]` Established URL-level validation for graph metrics -> matching counts alone are insufficient; page lists must also match exactly.
+
+- `[13:44]` Audited broken, redirect, and nofollow detection against raw all_inlinks.csv data -> verified analyzer results independently from source exports.
+
+- `[13:44]` Confirmed graph-link analysis uses Hyperlink rows only -> excluded Canonical, CSS, JavaScript, Redirect, and other non-content link types from validation.
+
+- `[13:44]` Investigated Status Code and Follow edge cases -> verified handling of empty values, case sensitivity, and integer conversion behavior before accepting counts as correct.
+
+- `[13:44]` Checked duplicate link rows during validation -> confirmed whether analyzer logic should count rows exactly as exported or apply deduplication.

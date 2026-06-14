@@ -52,3 +52,16 @@ recommendations**. It serves a live dashboard at localhost:7700 and outputs
 - Validate graph-analysis rules against raw Screaming Frog exports whenever possible, not only against analyzer outputs.
 - Treat internal_html.csv as the source of truth for page-level metrics such as Unique Inlinks, Crawl Depth, and Indexability.
 - A graph-analysis implementation is considered correct only when analyzer results match an independent calculation from the raw CSV.
+
+- Orphan pages must be calculated using the exact "Unique Inlinks" column, never "Inlinks".
+- Verify CSV column names directly before implementing rulebook logic; similar column names can produce incorrect results.
+- Check for empty or null metric values before relying on integer conversion, as they can create false positives in rule-based analysis.
+
+- Validate orphan-page detection using an independent calculation from internal_html.csv whenever the logic changes.
+- Compare both counts and URL lists; matching totals alone do not guarantee correctness.
+- Treat raw CSV calculations as the final verification layer for graph-analysis rules.
+
+- Broken, redirect, and nofollow link checks must operate on Hyperlink rows only from all_inlinks.csv.
+- Verify raw CSV value formats before implementing rules (e.g., Follow may vary in capitalization or contain empty values).
+- Always inspect null-handling behavior when using _int() on Status Code fields to avoid incorrect classifications.
+- Validate link-analysis outputs against raw CSV counts before considering a rule complete.
