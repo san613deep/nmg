@@ -93,4 +93,5 @@ recommendations**. It serves a live dashboard at localhost:7700 and outputs
 - Oversized clusters should be refined using keyword similarity to improve topical coherence.
 - Singleton clusters should be merged only when a sufficiently similar cluster exists; otherwise retain them.
 - Every indexable page must belong to exactly one cluster after all refinement steps.
+- Weighted keyword extraction: Title(3x), H1(3x), H2s(2x), Body(1x) in `page_keywords()` to prioritize high-signal content for clustering.
 - Recalculate hub_page, hub_inlinks, and authority whenever cluster membership changes.

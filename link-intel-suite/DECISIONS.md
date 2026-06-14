@@ -126,3 +126,5 @@ Format:
 - `[14:25]` Preserved cluster coverage invariant -> ensured every indexable page remains assigned to exactly one cluster after refinement.
 
 - `[14:25]` Recomputed hub and authority metrics after re-clustering -> authority signals must reflect the final cluster structure, not the original grouping.
+
+- `[16:30]` Improved keyword extraction weighting in `page_keywords()` -> shifted from equal weighting of all sources to weighted multipliers: Title (3x), H1 (3x), H2s (2x), and Body (1x). This ensures that high-signal areas (titles/headers) have a stronger influence on topical clustering and entity relatedness. Verified shift in top-12 keywords across 5 sample pages and confirmed no pipeline regressions.
