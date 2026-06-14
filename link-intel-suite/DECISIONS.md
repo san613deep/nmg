@@ -104,3 +104,25 @@ Format:
 - `[14:09]` Excluded borderline descriptive anchors from the generic set -> avoided increasing false positives by classifying potentially meaningful anchors as generic.
 
 - `[14:09]` Compared generic-anchor counts before and after the update -> verified the impact of the expanded classification rules on real crawl data.
+
+- `[14:20]` Performed full topical-cluster audit -> evaluated cluster size distribution, authority classification, and page coverage rather than relying on cluster counts alone.
+
+- `[14:20]` Added authority verification against member-page inlink distributions -> ensured 'hub' vs 'scattered' labels matched the published rulebook definition.
+
+- `[14:20]` Flagged oversized and undersized clusters -> identified candidates for splitting overly broad topics and merging weak clusters.
+
+- `[14:20]` Verified cluster coverage against indexable pages -> ensured every eligible page belonged to exactly one cluster and no pages were silently excluded.
+
+- `[14:20]` Compared clustered-page totals against indexable-page totals -> used coverage reconciliation as a quality gate before improving topic classification.
+
+- `[14:25]` Identified limitation in path-segment clustering -> large sections such as blog categories grouped unrelated content into a single cluster.
+
+- `[14:25]` Added keyword-overlap refinement after initial URL-based grouping -> combines structural signals with content similarity for more meaningful topical clusters.
+
+- `[14:25]` Implemented greedy sub-clustering for oversized groups -> reduces broad clusters without introducing expensive clustering algorithms.
+
+- `[14:25]` Added singleton-cluster merging using keyword similarity -> prevents isolated pages from forming weak topical groups when a clear related cluster exists.
+
+- `[14:25]` Preserved cluster coverage invariant -> ensured every indexable page remains assigned to exactly one cluster after refinement.
+
+- `[14:25]` Recomputed hub and authority metrics after re-clustering -> authority signals must reflect the final cluster structure, not the original grouping.

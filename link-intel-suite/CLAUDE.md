@@ -83,3 +83,14 @@ recommendations**. It serves a live dashboard at localhost:7700 and outputs
 - Prefer precision over aggressive expansion; avoid classifying potentially meaningful anchors as generic.
 - Validate classification changes by comparing generic-anchor counts before and after modifications.
 - Anchor classification rules should be tested against real crawl exports, not only static term lists.
+
+- Every indexable page should belong to a topical cluster; cluster coverage must reconcile exactly with the indexable-page count.
+- Authority classification must follow the rulebook: hub_inlinks >= 2 × second_highest member inlinks ⇒ authority = "hub"; otherwise "scattered".
+- Oversized clusters (>15 pages) should be reviewed for topic splitting; very small clusters (1-2 pages) should be reviewed for merging.
+- Cluster quality should be validated using page coverage, authority correctness, and cluster-size distribution, not just cluster count.
+
+- Path-segment grouping is useful as an initial signal but should not be the final clustering strategy for large content sections.
+- Oversized clusters should be refined using keyword similarity to improve topical coherence.
+- Singleton clusters should be merged only when a sufficiently similar cluster exists; otherwise retain them.
+- Every indexable page must belong to exactly one cluster after all refinement steps.
+- Recalculate hub_page, hub_inlinks, and authority whenever cluster membership changes.

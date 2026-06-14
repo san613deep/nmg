@@ -283,42 +283,78 @@ def page_keywords(page, body: str, top=12) -> list[str]:
 def cluster_pages(pages, page_text, n_keywords=12) -> dict:
     """Group indexable pages into topical clusters.
 
-    STARTER heuristic: cluster by first URL path segment (e.g. /success-stories/,
-    /blog/, root services). For each cluster compute a hub candidate = the member
-    with the most internal inlinks. Replace/augment with a real keyword/TF or
-    embedding clustering and let the model NAME each cluster (topic-agent).
+    Base grouping by path segment, then refined by keyword overlap:
+    - Large clusters (>15) are split into sub-clusters using greedy keyword matching.
+    - Singletons are merged into existing clusters with >=3 shared keywords.
     """
     idx200 = [p for p in pages if is_html(p) and is_200(p) and indexable(p)]
-    clusters = defaultdict(list)
+
+    # 1. Initial grouping by first URL path segment
+    base_clusters = defaultdict(list)
     kw = {}
     for p in idx200:
         u = _norm(p["Address"])
         path = urlparse(u).path.strip("/")
         seg = path.split("/")[0] if path else "(home)"
-        clusters[seg].append(u)
+        base_clusters[seg].append(u)
         kw[u] = page_keywords(p, page_text.get(u, ""), n_keywords)
 
+    # 2. Refinement: Sub-clustering for large groups
+    refined_clusters = defaultdict(list)
+    for seg, members in base_clusters.items():
+        if len(members) <= 15:
+            refined_clusters[seg].extend(members)
+            continue
+
+        # Sub-cluster large groups greedily
+        remaining = set(members)
+        while remaining:
+            seed = max(remaining, key=lambda u: len(kw.get(u, [])))
+            seed_kws = set(kw.get(seed, []))
+            sub_cluster = {u for u in remaining if len(seed_kws & set(kw.get(u, []))) >= 3}
+            top_kws = kw.get(seed, [])
+            name_parts = top_kws[:2] if top_kws else ["misc"]
+            sub_key = f"{seg}-{'-'.join(name_parts)}"
+            refined_clusters[sub_key].extend(list(sub_cluster))
+            remaining -= sub_cluster
+
+    # 3. Refinement: Merge singletons
+    final_clusters = defaultdict(list)
+    singletons = [k for k, v in refined_clusters.items() if len(v) == 1]
+    main_clusters = [k for k, v in refined_clusters.items() if len(v) > 1]
+
+    for k in main_clusters:
+        final_clusters[k].extend(refined_clusters[k])
+
+    for skey in singletons:
+        u = refined_clusters[skey][0]
+        u_kws = set(kw.get(u, []))
+        best_match, max_overlap = None, 0
+        for mk in main_clusters:
+            rep_u = refined_clusters[mk][0]
+            overlap = len(u_kws & set(kw.get(rep_u, [])))
+            if overlap > max_overlap:
+                max_overlap, best_match = overlap, mk
+        if best_match and max_overlap >= 3:
+            final_clusters[best_match].append(u)
+        else:
+            final_clusters[skey].append(u)
+
+    # 4. Final computation of hub and authority
     out = []
     inl = {_norm(p["Address"]): _int(p.get("Unique Inlinks")) for p in idx200}
-    for seg, members in sorted(clusters.items(), key=lambda x: -len(x[1])):
+    for key, members in sorted(final_clusters.items(), key=lambda x: -len(x[1])):
         members = sorted(members)
         hub = max(members, key=lambda u: inl.get(u, 0)) if members else None
         hub_inlinks = inl.get(hub, 0)
         member_inl = sorted((inl.get(m, 0) for m in members), reverse=True)
-        # authority signal: clear hub if the top page has >=2x the 2nd page's inlinks
         clear_hub = bool(len(member_inl) >= 2 and hub_inlinks >= 2 * (member_inl[1] or 1))
-        # cluster keywords = most common across members (placeholder name)
         ck = Counter()
         for m in members:
             ck.update(kw.get(m, []))
         out.append({
-            "key": seg,
-            "name": None,  # TODO: model names this cluster (topic-agent)
-            "size": len(members),
-            "pages": members,
-            "hub_page": hub,
-            "hub_inlinks": hub_inlinks,
-            "authority": "hub" if clear_hub else "scattered",
+            "key": key, "name": None, "size": len(members), "pages": members,
+            "hub_page": hub, "hub_inlinks": hub_inlinks, "authority": "hub" if clear_hub else "scattered",
             "keywords": [w for w, _ in ck.most_common(8)],
         })
     return {"clusters": out, "page_keywords": kw}
