@@ -65,3 +65,16 @@ recommendations**. It serves a live dashboard at localhost:7700 and outputs
 - Verify raw CSV value formats before implementing rules (e.g., Follow may vary in capitalization or contain empty values).
 - Always inspect null-handling behavior when using _int() on Status Code fields to avoid incorrect classifications.
 - Validate link-analysis outputs against raw CSV counts before considering a rule complete.
+
+- Link-issue metrics (broken, redirect, nofollow) should be validated with independent calculations from all_inlinks.csv.
+- Use identical Hyperlink filtering in both analyzer logic and verification scripts to avoid count discrepancies.
+- For rulebook-based metrics, analyzer outputs must match raw CSV counts exactly before the implementation is considered correct.
+
+- URL normalization must remove fragments (#...) while preserving query strings.
+- Remove a single trailing slash but preserve valid root URLs (e.g. https://example.com/ → https://example.com).
+- Validate normalization using both synthetic edge cases and real URLs from crawl exports.
+- Graph-analysis accuracy depends on consistent normalization across Address, Source, and Destination URL fields.
+
+- Every URL normalization change should be validated with explicit input/output test cases.
+- Query strings must be preserved while fragments are removed.
+- Helper functions that affect graph matching should have regression tests before modification.

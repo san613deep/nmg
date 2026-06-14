@@ -74,3 +74,25 @@ Format:
 - `[13:44]` Investigated Status Code and Follow edge cases -> verified handling of empty values, case sensitivity, and integer conversion behavior before accepting counts as correct.
 
 - `[13:44]` Checked duplicate link rows during validation -> confirmed whether analyzer logic should count rows exactly as exported or apply deduplication.
+
+- `[13:51]` Added direct CSV validation for broken, redirect, and nofollow metrics -> verifies analyzer counts against the original Screaming Frog export.
+
+- `[13:51]` Used Hyperlink-only filtering for validation -> matches the rulebook definition and avoids counting non-link asset rows.
+
+- `[13:51]` Established independent count verification for link issues -> analyzer metrics must match raw CSV calculations exactly before considering the implementation complete.
+
+- `[13:51]` Validated all three link-issue categories together -> reduced the risk of inconsistent filtering logic across broken, redirect, and nofollow checks.
+
+- `[13:54]` Audited URL normalization logic against rulebook requirements -> verified fragment removal and trailing-slash handling before relying on URL matching throughout the graph analysis.
+
+- `[13:54]` Added explicit edge-case tests for _norm() -> covered query strings, fragments, root URLs, encoded characters, empty values, and None inputs.
+
+- `[13:54]` Validated normalization against real crawl data -> scanned Address, Source, and Destination URLs from exports to identify potential matching failures not covered by synthetic tests.
+
+- `[13:54]` Treated URL normalization as a foundational dependency -> graph analysis, orphan detection, and link recommendations all depend on consistent URL matching.
+
+- `[13:59]` Added unit-test style validation for _norm() -> verifies normalization behavior automatically instead of relying on visual code review.
+
+- `[13:59]` Tested fragment removal, trailing-slash handling, root URLs, and query-string preservation -> confirms compliance with rulebook URL normalization requirements.
+
+- `[13:59]` Used expected-output assertions for URL normalization -> makes future regressions immediately visible when modifying helper functions.
