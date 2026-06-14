@@ -271,12 +271,13 @@ def _tokens(text: str) -> list[str]:
 
 
 def page_keywords(page, body: str, top=12) -> list[str]:
-    """Cheap TF keywords from Title + H1 + H2 + body (deterministic)."""
-    blob = " ".join([
-        page.get("Title 1", "") or "", (page.get("H1-1", "") or "") + " ",
-        page.get("H2-1", "") or "", page.get("H2-2", "") or "", (body or "")[:6000],
-    ])
-    c = Counter(_tokens(blob))
+    """Weighted TF keywords from Title (3x), H1 (3x), H2s (2x), and body (1x)."""
+    c = Counter()
+    c.update(_tokens(page.get("Title 1", "")) * 3)
+    c.update(_tokens(page.get("H1-1", "")) * 3)
+    c.update(_tokens(page.get("H2-1", "")) * 2)
+    c.update(_tokens(page.get("H2-2", "")) * 2)
+    c.update(_tokens((body or "")[:6000]))
     return [w for w, _ in c.most_common(top)]
 
 
