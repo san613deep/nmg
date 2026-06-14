@@ -39,4 +39,16 @@ recommendations**. It serves a live dashboard at localhost:7700 and outputs
 - (e.g. "page text filenames are URL-encoded with an `original_https_` prefix - decode before
   matching to Address")
 - (e.g. "orphans = `Unique Inlinks` == 0, NOT `Inlinks` == 0 - Inlinks counts repeated links")
-- ...
+- Always run automated report.json validation after each end-to-end execution; manual inspection is insufficient for detecting schema regressions.
+
+- Over-linked pages must be determined from the distribution of Unique Inlinks across indexable 200 HTML pages.
+- Prefer explicit percentile calculations over compressed list comprehensions when implementing grading rules.
+- After modifying graph-analysis rules, verify both the threshold value and the resulting URLs to ensure rulebook compliance.
+
+- When validating percentile-based rules, inspect the full metric distribution rather than only the final count.
+- Multiple pages can share the 95th-percentile threshold value; include all pages at or above the threshold even if the result exceeds exactly 5% of pages.
+- Verification should include threshold value, qualifying URLs, and their metric values to explain unexpected counts.
+
+- Validate graph-analysis rules against raw Screaming Frog exports whenever possible, not only against analyzer outputs.
+- Treat internal_html.csv as the source of truth for page-level metrics such as Unique Inlinks, Crawl Depth, and Indexability.
+- A graph-analysis implementation is considered correct only when analyzer results match an independent calculation from the raw CSV.

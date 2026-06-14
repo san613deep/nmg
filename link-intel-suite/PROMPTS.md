@@ -43,4 +43,17 @@ Format per entry:
 - **For:** Automated schema validation and regression testing of report.json before making further changes.
 - **Revised?** Yes. Initially relied on manual inspection of report.json, then switched to an automated validation script to catch missing fields and type mismatches consistently.
 
-5.
+5. **Prompt:** "Read rulebook.md section A, rule over_linked_page: 'page in the top 5% by Unique Inlinks (sitewide nav/footer noise)'. Now read linkintel/analyzer.py lines 175-178. The current implementation is convoluted with a double list comprehension and unclear logic. Rewrite it clearly: (1) Collect all Unique Inlinks values for indexable 200 HTML pages (2) Sort them ascending (3) Calculate the 95th percentile index: idx = math.ceil(len(vals) * 0.95) - 1 (4) The threshold is vals[idx] (5) Return all pages whose Unique Inlinks >= that threshold (6) Handle edge case: if threshold is 0 or 1, still return the top 5%. Replace ONLY lines 175-178. Keep the rest of graph_stats() unchanged. Run `python linkintel/analyzer.py ../sample-export/` and show the over_linked count. Print the threshold value and the qualifying URLs for verification."
+* **For:** Refactoring over-linked page detection and aligning the implementation with the published rulebook definition.
+* **Revised?** Yes. The starter implementation used difficult-to-read percentile logic. Replaced it with an explicit percentile calculation and verification output to ensure correctness against the grading rules.
+
+
+6.- **Prompt**: "After fixing over_linked_pages, the count is [N] but I expected something different. Debug: (1) Print ALL Unique Inlinks values sorted: vals = sorted([_int(p.get('Unique Inlinks')) for p in idx200]) (2) Print len(vals) and the 95th percentile index (3) Print the threshold value: vals[math.ceil(len(vals) * 0.95) - 1] (4) Print which pages qualify and their Unique Inlinks values (5) Is the issue that many pages share the threshold value? The rulebook says 'top 5%' so all pages AT OR ABOVE the 95th percentile threshold should be included, even if that means slightly more than 5% of pages."
+- **For**: Investigating unexpected over-linked page counts after implementing percentile-based threshold logic.
+- **Revised**? Yes. Initial validation focused only on the final count. Expanded the prompt to inspect the full Unique Inlinks distribution, percentile threshold, and qualifying pages to explain the result.
+
+7. **Prompt**: "Verify over_linked_pages by cross-checking against the raw CSV: (1) Read internal_html.csv, filter to Content Type contains text/html, Status Code 200, Indexability == Indexable (2) Get all Unique Inlinks values, sort them (3) Calculate the 95th percentile threshold (4) Count how many pages are at or above it (5) Compare with the analyzer's output. Run both and show the comparison. They must match exactly."
+**For**: Independent verification of over-linked page detection using raw crawl data rather than analyzer-generated results.
+**Revised**? Yes. After validating the analyzer logic internally, added a direct CSV cross-check to ensure the implementation matched the source data and rulebook calculation exactly.
+
+8. 

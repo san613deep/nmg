@@ -173,9 +173,12 @@ def graph_stats(pages, inlinks, graph) -> dict:
     UNDER = 1
     under_linked = sorted([u for u, n in inl.items() if n <= UNDER])
     vals = sorted(inl.values())
-    over_thresh = vals[int(len(vals) * 0.95)] if vals else 0
-    over_linked = sorted([u for u, n in inl.items() if n >= max(over_thresh, 1) and n == max(vals or [0])][:0]) \
-        or sorted([u for u, n in inl.items() if over_thresh and n >= over_thresh])
+    if not vals:
+        over_linked = []
+    else:
+        idx = math.ceil(len(vals) * 0.95) - 1
+        threshold = vals[idx]
+        over_linked = sorted([u for u, n in inl.items() if n >= threshold])
 
     # broken / redirect / nofollow internal links (from all_inlinks)
     broken, redir, nofollow = [], [], []
